@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "SchematicsNodeApp",
+  "title": "Angular Node Application Options Schema",
+  "type": "object",
+  "description": "Generates a new basic app definition in the \"projects\" subfolder of the workspace.",
+  "properties": {
+    "projectRoot": {
+      "description": "The root directory of the new app.",
+      "type": "string",
+      "visible": false
+    },
+    "name": {
+      "description": "The name of the new app.",
+      "type": "string",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "What name would you like to use for the application?"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}
