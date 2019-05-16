@@ -5,13 +5,15 @@ import {workspaces} from '@angular-devkit/core';
 import {NodeJsSyncHost} from "@angular-devkit/core/node";
 import {runWebpack} from '@angular-devkit/build-webpack';
 import {Configuration} from "webpack";
+import {mapTo, switchMap, map} from 'rxjs/operators';
+import {resolve} from "path";
 
 
 export const execute = (options: any, context: BuilderContext): Observable<BuilderOutput> => {
   let serverOptions;
   let buildElectronOptions;
 
-  const setup = async (): Promise<BuilderOutput> => {
+  const setup = async (): Promise<workspaces.ProjectDefinition> => {
     return new Promise(async (resolve, reject) => {
 
       const workspaceHost = workspaces.createWorkspaceHost(new NodeJsSyncHost());
@@ -26,33 +28,47 @@ export const execute = (options: any, context: BuilderContext): Observable<Build
       console.log(workspace.projects.get(context.target.project).sourceRoot);
 
 
-      resolve({success: true});
+      resolve(project);
     });
-
-
-    const webpackConfig: Configuration = {
-      entry: options.main,
-      mode: 'development',
-      target: 'node',
-      output: {
-        path: options.outputPath,
-        filename: 'main.js'
-      },
-      resolve: {
-        extensions: ['.ts', '.js'],
-      }
-    };
-
-
-    runWebpack(webpackConfig, context)
 
 
   }
 
+
+
   console.log("Node Builder");
 
-  return from(setup())
+  return from(setup()).pipe(
+    map(project => normalizeOptions(options, project, context)),
+    map(options => buildConfig(options)),
+    switchMap(webpackConfig => runWebpack(webpackConfig, context)),
+    mapTo({success: true}
+    )
+  )
 
+}
+
+
+function normalizeOptions(options: any, project: workspaces.ProjectDefinition, context: BuilderContext) {
+  options.outputPath = resolve(context.workspaceRoot, options.outputPath);
+  options.main = resolve(project.sourceRoot, options.main);
+  return options;
+}
+
+function buildConfig(options) {
+  const webpackConfig: Configuration = {
+    entry: options.main,
+    mode: 'development',
+    target: 'node',
+    output: {
+      path: options.outputPath,
+      filename: 'main.js'
+    },
+    resolve: {
+      extensions: ['.ts', '.js'],
+    }
+  };
+  return webpackConfig;
 }
 
 export default createBuilder<any, DevServerBuilderOutput>(execute);

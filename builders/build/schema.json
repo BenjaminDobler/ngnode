@@ -4,6 +4,12 @@
   "description": "Dev Server target options for Build Facade.",
   "type": "object",
   "properties": {
+    "outputPath": {
+      "type": "string"
+    },
+    "main": {
+      "type": "string"
+    }
 
   },
   "additionalProperties": false
