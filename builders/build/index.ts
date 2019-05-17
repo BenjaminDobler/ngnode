@@ -5,9 +5,12 @@ import {workspaces} from '@angular-devkit/core';
 import {NodeJsSyncHost} from "@angular-devkit/core/node";
 import {runWebpack} from '@angular-devkit/build-webpack';
 import {Configuration} from "webpack";
-import {mapTo, switchMap, map} from 'rxjs/operators';
-import {resolve} from "path";
+import {mapTo, switchMap, map, concatMap, tap} from 'rxjs/operators';
+import {join, resolve} from "path";
+import {ChildProcess, fork} from "child_process";
 
+
+let nodeProcess: ChildProcess;
 
 export const execute = (options: any, context: BuilderContext): Observable<BuilderOutput> => {
   let serverOptions;
@@ -42,10 +45,24 @@ export const execute = (options: any, context: BuilderContext): Observable<Build
     map(project => normalizeOptions(options, project, context)),
     map(options => buildConfig(options)),
     switchMap(webpackConfig => runWebpack(webpackConfig, context)),
+    tap(x => {
+      console.log("Run node app ", join(options.outputPath,x.emittedFiles[0].file));
+      startNodeApp(join(options.outputPath,x.emittedFiles[0].file));
+    }),
     mapTo({success: true}
     )
   )
 
+}
+
+
+function startNodeApp(mainFile: string) {
+  console.log("Start Node app");
+  if (nodeProcess) {
+    nodeProcess.kill();
+    nodeProcess = null;
+  }
+  nodeProcess = fork(mainFile);
 }
 
 
@@ -60,6 +77,7 @@ function buildConfig(options) {
     entry: options.main,
     mode: 'development',
     target: 'node',
+    watch: true,
     output: {
       path: options.outputPath,
       filename: 'main.js'

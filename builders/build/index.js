@@ -15,6 +15,8 @@ const node_1 = require("@angular-devkit/core/node");
 const build_webpack_1 = require("@angular-devkit/build-webpack");
 const operators_1 = require("rxjs/operators");
 const path_1 = require("path");
+const child_process_1 = require("child_process");
+let nodeProcess;
 exports.execute = (options, context) => {
     let serverOptions;
     let buildElectronOptions;
@@ -29,8 +31,19 @@ exports.execute = (options, context) => {
         }));
     });
     console.log("Node Builder");
-    return rxjs_1.from(setup()).pipe(operators_1.map(project => normalizeOptions(options, project, context)), operators_1.map(options => buildConfig(options)), operators_1.switchMap(webpackConfig => build_webpack_1.runWebpack(webpackConfig, context)), operators_1.mapTo({ success: true }));
+    return rxjs_1.from(setup()).pipe(operators_1.map(project => normalizeOptions(options, project, context)), operators_1.map(options => buildConfig(options)), operators_1.switchMap(webpackConfig => build_webpack_1.runWebpack(webpackConfig, context)), operators_1.tap(x => {
+        console.log("Run node app ", path_1.join(options.outputPath, x.emittedFiles[0].file));
+        startNodeApp(path_1.join(options.outputPath, x.emittedFiles[0].file));
+    }), operators_1.mapTo({ success: true }));
 };
+function startNodeApp(mainFile) {
+    console.log("Start Node app");
+    if (nodeProcess) {
+        nodeProcess.kill();
+        nodeProcess = null;
+    }
+    nodeProcess = child_process_1.fork(mainFile);
+}
 function normalizeOptions(options, project, context) {
     options.outputPath = path_1.resolve(context.workspaceRoot, options.outputPath);
     options.main = path_1.resolve(project.sourceRoot, options.main);
@@ -41,6 +54,7 @@ function buildConfig(options) {
         entry: options.main,
         mode: 'development',
         target: 'node',
+        watch: true,
         output: {
             path: options.outputPath,
             filename: 'main.js'
