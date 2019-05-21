@@ -1,6 +1,6 @@
 {
   "name": "@richapps/ngnode",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "devkit for building node apps with the angular cli",
   "author": {
     "name": "Benjamin Dobler",
