@@ -13,40 +13,23 @@ import {ChildProcess, fork} from "child_process";
 let nodeProcess: ChildProcess;
 
 export const execute = (options: any, context: BuilderContext): Observable<BuilderOutput> => {
-  let serverOptions;
-  let buildElectronOptions;
-
   const setup = async (): Promise<workspaces.ProjectDefinition> => {
     return new Promise(async (resolve, reject) => {
-
       const workspaceHost = workspaces.createWorkspaceHost(new NodeJsSyncHost());
       const {workspace} = await workspaces.readWorkspace(
         context.workspaceRoot,
         workspaceHost
       );
-
-      console.log("Workspace");
       const project: workspaces.ProjectDefinition = workspace.projects.get(context.target.project);
-
-      console.log(workspace.projects.get(context.target.project).sourceRoot);
-
-
       resolve(project);
     });
-
-
   }
-
-
-
-  console.log("Node Builder");
 
   return from(setup()).pipe(
     map(project => normalizeOptions(options, project, context)),
     map(options => buildConfig(options)),
     switchMap(webpackConfig => runWebpack(webpackConfig, context)),
     tap(x => {
-      console.log("Run node app ", join(options.outputPath,x.emittedFiles[0].file));
       startNodeApp(join(options.outputPath,x.emittedFiles[0].file));
     }),
     mapTo({success: true}
@@ -57,7 +40,6 @@ export const execute = (options: any, context: BuilderContext): Observable<Build
 
 
 function startNodeApp(mainFile: string) {
-  console.log("Start Node app");
   if (nodeProcess) {
     nodeProcess.kill();
     nodeProcess = null;

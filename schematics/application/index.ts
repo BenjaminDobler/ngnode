@@ -22,12 +22,9 @@ export default function (options: any): Rule {
     if (!options.name) {
       throw new SchematicsException(`Invalid options, "name" is required.`);
     }
-
     validateProjectName(options.name);
     options.prefix = options.prefix || 'app';
-
     const workspace = await getWorkspace(host);
-
     const newProjectRoot = workspace.extensions.newProjectRoot as (string | undefined) || '';
     const isRootApp = options.projectRoot !== undefined;
     const appDir = isRootApp
@@ -35,10 +32,6 @@ export default function (options: any): Rule {
       : join(normalize(newProjectRoot), options.name);
     const sourceDir = `${appDir}/src`
     options.appProjectRoot = sourceDir;
-
-
-    console.log("Add Node app! ", sourceDir);
-
     return chain([updateAngularConfig(options), addFiles(options)]);
 
   }
@@ -47,10 +40,7 @@ export default function (options: any): Rule {
 function updateAngularConfig(options): Rule {
   return async (tree: Tree, _context: SchematicContext) => {
     const workspace = getWorkspace2(tree);
-
-    const project = workspace.projects[options.name] = {
-
-
+    workspace.projects[options.name] = {
       projectType: ProjectType.Application,
       root: "projects/node1",
       sourceRoot: options.appProjectRoot,
