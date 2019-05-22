@@ -30,7 +30,6 @@ function default_1(options) {
             : core_1.join(core_1.normalize(newProjectRoot), options.name);
         const sourceDir = `${appDir}/src`;
         options.appProjectRoot = sourceDir;
-        console.log("Add Node app! ", sourceDir);
         return schematics_1.chain([updateAngularConfig(options), addFiles(options)]);
     });
 }
@@ -38,7 +37,7 @@ exports.default = default_1;
 function updateAngularConfig(options) {
     return (tree, _context) => __awaiter(this, void 0, void 0, function* () {
         const workspace = config_1.getWorkspace(tree);
-        const project = workspace.projects[options.name] = {
+        workspace.projects[options.name] = {
             projectType: workspace_models_1.ProjectType.Application,
             root: "projects/node1",
             sourceRoot: options.appProjectRoot,
@@ -66,4 +65,3 @@ function addFiles(options) {
         schematics_1.move(options.appProjectRoot)
     ]));
 }
-//# sourceMappingURL=index.js.map

@@ -18,26 +18,19 @@ const path_1 = require("path");
 const child_process_1 = require("child_process");
 let nodeProcess;
 exports.execute = (options, context) => {
-    let serverOptions;
-    let buildElectronOptions;
     const setup = () => __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             const workspaceHost = core_1.workspaces.createWorkspaceHost(new node_1.NodeJsSyncHost());
             const { workspace } = yield core_1.workspaces.readWorkspace(context.workspaceRoot, workspaceHost);
-            console.log("Workspace");
             const project = workspace.projects.get(context.target.project);
-            console.log(workspace.projects.get(context.target.project).sourceRoot);
             resolve(project);
         }));
     });
-    console.log("Node Builder");
     return rxjs_1.from(setup()).pipe(operators_1.map(project => normalizeOptions(options, project, context)), operators_1.map(options => buildConfig(options)), operators_1.switchMap(webpackConfig => build_webpack_1.runWebpack(webpackConfig, context)), operators_1.tap(x => {
-        console.log("Run node app ", path_1.join(options.outputPath, x.emittedFiles[0].file));
         startNodeApp(path_1.join(options.outputPath, x.emittedFiles[0].file));
     }), operators_1.mapTo({ success: true }));
 };
 function startNodeApp(mainFile) {
-    console.log("Start Node app");
     if (nodeProcess) {
         nodeProcess.kill();
         nodeProcess = null;
@@ -66,4 +59,3 @@ function buildConfig(options) {
     return webpackConfig;
 }
 exports.default = architect_1.createBuilder(exports.execute);
-//# sourceMappingURL=index.js.map
