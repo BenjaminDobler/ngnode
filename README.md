@@ -6,7 +6,8 @@ Angular + Node = :heart:
 ### Create new node project
 
 ```bash
-ng generate --schematic=@richapps/ngnode:application <project-name>
+ng generate @richapps/ngnode:application
+
 ```
 
 ### Build and run node app
