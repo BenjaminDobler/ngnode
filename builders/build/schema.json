@@ -9,8 +9,16 @@
     },
     "main": {
       "type": "string"
+    },
+    "fileReplacements": {
+      "description": "Replace files with other files in the build.",
+      "type": "array",
+      "items": {
+
+      },
+      "default": []
     }
 
   },
-  "additionalProperties": false
+  "additionalProperties": true
 }

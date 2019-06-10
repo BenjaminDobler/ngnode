@@ -32,6 +32,7 @@ export default function (options: any): Rule {
       : join(normalize(newProjectRoot), options.name);
     const sourceDir = `${appDir}/src`
     options.appProjectRoot = sourceDir;
+    options.projectDir = appDir;
     return chain([updateAngularConfig(options), addFiles(options)]);
 
   }
@@ -42,15 +43,16 @@ function updateAngularConfig(options): Rule {
     const workspace = getWorkspace2(tree);
     workspace.projects[options.name] = {
       projectType: ProjectType.Application,
-      root: "projects/node1",
+      root: "projects/" + options.name,
       sourceRoot: options.appProjectRoot,
       prefix: "app",
       architect: {
-         ['build-node']: {
+        ['build-node']: {
           builder: "@richapps/ngnode:build",
           options: {
             outputPath: "dist/" + options.name,
-            main: "main.ts"
+            main: "projects/" + options.name + "/main.ts",
+            tsConfig: "projects/" + options.name + "/tsconfig.json"
           }
         }
       }
@@ -62,13 +64,13 @@ function updateAngularConfig(options): Rule {
 
 function addFiles(options) {
   return mergeWith(
-    apply(url(`./files/src`), [
+    apply(url(`./files`), [
       template({
         tmpl: '',
         name: options.name,
-        root: options.appProjectRoot
+        root: options.projectDir
       }),
-      move(options.appProjectRoot)
+      move(options.projectDir)
     ]));
 }
 

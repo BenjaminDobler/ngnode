@@ -18,6 +18,7 @@ const path_1 = require("path");
 const child_process_1 = require("child_process");
 let nodeProcess;
 exports.execute = (options, context) => {
+    console.log("Options ", options);
     const setup = () => __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             const workspaceHost = core_1.workspaces.createWorkspaceHost(new node_1.NodeJsSyncHost());
@@ -27,6 +28,7 @@ exports.execute = (options, context) => {
         }));
     });
     return rxjs_1.from(setup()).pipe(operators_1.map(project => normalizeOptions(options, project, context)), operators_1.map(options => buildConfig(options)), operators_1.switchMap(webpackConfig => build_webpack_1.runWebpack(webpackConfig, context)), operators_1.tap(x => {
+        console.log(x);
         startNodeApp(path_1.join(options.outputPath, x.emittedFiles[0].file));
     }), operators_1.mapTo({ success: true }));
 };
@@ -39,23 +41,43 @@ function startNodeApp(mainFile) {
 }
 function normalizeOptions(options, project, context) {
     options.outputPath = path_1.resolve(context.workspaceRoot, options.outputPath);
-    options.main = path_1.resolve(project.sourceRoot, options.main);
+    options.main = path_1.resolve(context.workspaceRoot, options.main);
+    options.tsConfig = path_1.resolve(context.workspaceRoot, options.tsConfig);
     return options;
 }
 function buildConfig(options) {
+    const alias = options.fileReplacements.reduce((aliases, replacement) => (Object.assign({}, aliases, { [path_1.resolve(replacement.replace)]: path_1.resolve(replacement.with) })), {});
+    console.log("TS config ", options.tsConfig);
+    const extensions = ['.ts', '.js'];
     const webpackConfig = {
         entry: options.main,
-        mode: 'development',
+        mode: 'production',
         target: 'node',
         watch: true,
         output: {
             path: options.outputPath,
             filename: 'main.js'
         },
+        module: {
+            rules: [
+                {
+                    test: /\.(j|t)sx?$/,
+                    loader: "ts-loader",
+                    options: {
+                        configFile: options.tsConfig,
+                        transpileOnly: true,
+                        // https://github.com/TypeStrong/ts-loader/pull/685
+                        experimentalWatchApi: true
+                    }
+                }
+            ]
+        },
         resolve: {
             extensions: ['.ts', '.js'],
+            alias
         }
     };
+    console.log(webpackConfig);
     return webpackConfig;
 }
 exports.default = architect_1.createBuilder(exports.execute);

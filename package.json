@@ -1,6 +1,6 @@
 {
   "name": "@richapps/ngnode",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "devkit for building node apps with the angular cli",
   "author": {
     "name": "Benjamin Dobler",
@@ -33,6 +33,8 @@
     "@types/webpack-dev-server": "^3.1.5",
     "jasmine": "^3.0.0",
     "quicktype": "^15.0.185",
+    "ts-loader": "^6.0.2",
+    "tsconfig-paths-webpack-plugin": "^3.2.0",
     "typescript": "^3.4.5"
   }
 }

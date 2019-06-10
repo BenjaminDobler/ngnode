@@ -30,6 +30,7 @@ function default_1(options) {
             : core_1.join(core_1.normalize(newProjectRoot), options.name);
         const sourceDir = `${appDir}/src`;
         options.appProjectRoot = sourceDir;
+        options.projectDir = appDir;
         return schematics_1.chain([updateAngularConfig(options), addFiles(options)]);
     });
 }
@@ -39,7 +40,7 @@ function updateAngularConfig(options) {
         const workspace = config_1.getWorkspace(tree);
         workspace.projects[options.name] = {
             projectType: workspace_models_1.ProjectType.Application,
-            root: "projects/node1",
+            root: "projects/" + options.name,
             sourceRoot: options.appProjectRoot,
             prefix: "app",
             architect: {
@@ -47,7 +48,8 @@ function updateAngularConfig(options) {
                     builder: "@richapps/ngnode:build",
                     options: {
                         outputPath: "dist/" + options.name,
-                        main: "main.ts"
+                        main: "projects/" + options.name + "/main.ts",
+                        tsConfig: "projects/" + options.name + "/tsconfig.json"
                     }
                 }
             }
@@ -56,12 +58,12 @@ function updateAngularConfig(options) {
     });
 }
 function addFiles(options) {
-    return schematics_1.mergeWith(schematics_1.apply(schematics_1.url(`./files/src`), [
+    return schematics_1.mergeWith(schematics_1.apply(schematics_1.url(`./files`), [
         schematics_1.template({
             tmpl: '',
             name: options.name,
-            root: options.appProjectRoot
+            root: options.projectDir
         }),
-        schematics_1.move(options.appProjectRoot)
+        schematics_1.move(options.projectDir)
     ]));
 }

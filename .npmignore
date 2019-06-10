@@ -1,4 +1,5 @@
 # Ignores TypeScript files, but keeps definitions.
 *.ts
 !schematics/ng-add/files/main.ts
+!schematics/application/files/src/main.ts
 !*.d.ts
