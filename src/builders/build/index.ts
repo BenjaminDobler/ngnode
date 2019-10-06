@@ -1,15 +1,15 @@
-import {DevServerBuilderOutput} from "@angular-devkit/build-angular";
-import {BuilderContext, BuilderOutput, createBuilder} from "@angular-devkit/architect";
-import {from, Observable} from "rxjs";
-import {workspaces} from '@angular-devkit/core';
-import {NodeJsSyncHost} from "@angular-devkit/core/node";
-import {runWebpack} from '@angular-devkit/build-webpack';
-import {Configuration} from "webpack";
-import {map, mapTo, switchMap, tap} from 'rxjs/operators';
-import {join, resolve} from "path";
-import {ChildProcess, fork} from "child_process";
-import {TsconfigPathsPlugin} from "tsconfig-paths-webpack-plugin";
-
+import { DevServerBuilderOutput } from "@angular-devkit/build-angular";
+import { BuilderContext, BuilderOutput, createBuilder } from "@angular-devkit/architect";
+import { from, Observable } from "rxjs";
+import { workspaces } from '@angular-devkit/core';
+import { NodeJsSyncHost } from "@angular-devkit/core/node";
+import { runWebpack } from '@angular-devkit/build-webpack';
+import { Configuration } from "webpack";
+import { map, mapTo, switchMap, tap } from 'rxjs/operators';
+import { join, resolve } from "path";
+import { ChildProcess, fork } from "child_process";
+import { TsconfigPathsPlugin } from "tsconfig-paths-webpack-plugin";
+const webpackMerge = require('webpack-merge');
 
 let nodeProcess: ChildProcess;
 
@@ -18,7 +18,7 @@ export const execute = (options: any, context: BuilderContext): Observable<Build
   const setup = async (): Promise<workspaces.ProjectDefinition> => {
     return new Promise(async (resolve, reject) => {
       const workspaceHost = workspaces.createWorkspaceHost(new NodeJsSyncHost());
-      const {workspace} = await workspaces.readWorkspace(
+      const { workspace } = await workspaces.readWorkspace(
         context.workspaceRoot,
         workspaceHost
       );
@@ -33,9 +33,9 @@ export const execute = (options: any, context: BuilderContext): Observable<Build
     switchMap(webpackConfig => runWebpack(webpackConfig, context)),
     tap(x => {
       console.log(x);
-      startNodeApp(join(options.outputPath,x.emittedFiles[0].file));
+      // startNodeApp(join(options.outputPath, x.emittedFiles[0].file));
     }),
-    mapTo({success: true}
+    mapTo({ success: true }
     )
   )
 
@@ -60,19 +60,18 @@ function normalizeOptions(options: any, project: workspaces.ProjectDefinition, c
 
 function buildConfig(options) {
 
-
   const alias = options.fileReplacements.reduce(
-      (aliases, replacement) => ({
-        ...aliases,
-        [resolve(replacement.replace)]: resolve(replacement.with)
-      }),
-      {}
-    );
+    (aliases, replacement) => ({
+      ...aliases,
+      [resolve(replacement.replace)]: resolve(replacement.with)
+    }),
+    {}
+  );
 
 
   console.log("TS config ", options.tsConfig);
   const extensions = ['.ts', '.js'];
-  const webpackConfig: Configuration = {
+  let webpackConfig: Configuration = {
     entry: options.main,
     mode: 'production',
     target: 'node',
@@ -100,7 +99,13 @@ function buildConfig(options) {
       alias
     }
   };
-  console.log(webpackConfig);
+
+  console.log(options.webpackConfigObject);
+  if (options.webpackConfigObject) {
+    webpackConfig = webpackMerge(webpackConfig, options.webpackConfigObject)
+  }
+  // console.log(webpackConfig);
+
   return webpackConfig;
 }
 
