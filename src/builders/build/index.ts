@@ -14,7 +14,6 @@ const webpackMerge = require('webpack-merge');
 let nodeProcess: ChildProcess;
 
 export const execute = (options: any, context: BuilderContext): Observable<BuilderOutput> => {
-  console.log("Options ", options);
   const setup = async (): Promise<workspaces.ProjectDefinition> => {
     return new Promise(async (resolve, reject) => {
       const workspaceHost = workspaces.createWorkspaceHost(new NodeJsSyncHost());
@@ -31,16 +30,10 @@ export const execute = (options: any, context: BuilderContext): Observable<Build
     map(project => normalizeOptions(options, project, context)),
     map(options => buildConfig(options)),
     switchMap(webpackConfig => runWebpack(webpackConfig, context)),
-    tap(x => {
-      console.log(x);
-      // startNodeApp(join(options.outputPath, x.emittedFiles[0].file));
-    }),
     mapTo({ success: true }
     )
   )
-
 }
-
 
 function startNodeApp(mainFile: string) {
   if (nodeProcess) {
@@ -50,7 +43,6 @@ function startNodeApp(mainFile: string) {
   nodeProcess = fork(mainFile);
 }
 
-
 function normalizeOptions(options: any, project: workspaces.ProjectDefinition, context: BuilderContext) {
   options.outputPath = resolve(context.workspaceRoot, options.outputPath);
   options.main = resolve(context.workspaceRoot, options.main);
@@ -59,7 +51,6 @@ function normalizeOptions(options: any, project: workspaces.ProjectDefinition, c
 }
 
 function buildConfig(options) {
-
   const alias = options.fileReplacements.reduce(
     (aliases, replacement) => ({
       ...aliases,
@@ -68,8 +59,6 @@ function buildConfig(options) {
     {}
   );
 
-
-  console.log("TS config ", options.tsConfig);
   const extensions = ['.ts', '.js'];
   let webpackConfig: Configuration = {
     entry: options.main,
@@ -100,12 +89,9 @@ function buildConfig(options) {
     }
   };
 
-  console.log(options.webpackConfigObject);
   if (options.webpackConfigObject) {
     webpackConfig = webpackMerge(webpackConfig, options.webpackConfigObject)
   }
-  // console.log(webpackConfig);
-
   return webpackConfig;
 }
 
