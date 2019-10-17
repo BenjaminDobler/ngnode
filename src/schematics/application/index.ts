@@ -8,13 +8,13 @@ import {
   template,
   Tree, url
 } from "@angular-devkit/schematics";
-import {validateProjectName} from "@schematics/angular/utility/validation";
-import {getWorkspace} from "@schematics/angular/utility/workspace";
-import {getWorkspace as getWorkspace2} from "@schematics/angular/utility/config";
+import { validateProjectName } from "@schematics/angular/utility/validation";
+import { getWorkspace } from "@schematics/angular/utility/workspace";
+import { getWorkspace as getWorkspace2 } from "@schematics/angular/utility/config";
 
-import {join, normalize} from "@angular-devkit/core";
-import {updateWorkspace} from "@schematics/angular/utility/config";
-import {ProjectType} from "@schematics/angular/utility/workspace-models";
+import { join, normalize } from "@angular-devkit/core";
+import { updateWorkspace } from "@schematics/angular/utility/config";
+import { ProjectType } from "@schematics/angular/utility/workspace-models";
 
 
 export default function (options: any): Rule {
@@ -51,7 +51,7 @@ function updateAngularConfig(options): Rule {
           builder: "@richapps/ngnode:build",
           options: {
             outputPath: "dist/" + options.name,
-            main: "projects/" + options.name + "/main.ts",
+            main: "projects/" + options.name + "/src/main.ts",
             tsConfig: "projects/" + options.name + "/tsconfig.json"
           }
         }

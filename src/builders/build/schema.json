@@ -10,15 +10,15 @@
     "main": {
       "type": "string"
     },
+    "webpackConfigObject": {
+      "type": "object"
+    },
     "fileReplacements": {
       "description": "Replace files with other files in the build.",
       "type": "array",
-      "items": {
-
-      },
+      "items": {},
       "default": []
     }
-
   },
   "additionalProperties": true
 }

@@ -1,6 +1,6 @@
 {
   "name": "@richapps/ngnode",
-  "version": "0.0.4",
+  "version": "0.0.6-beta.2",
   "description": "devkit for building node apps with the angular cli",
   "author": {
     "name": "Benjamin Dobler",
@@ -13,28 +13,32 @@
   },
   "license": "MIT",
   "scripts": {
-    "build": "tsc -p tsconfig.json"
+    "build": "tsc -p tsconfig.json && npm run copy:files && npm run copy:json",
+    "copy:json": "cpx 'src/**/*.json' ./dist",
+    "copy:files": "cpx \"./src/schematics/application/files/**/*\" \"./dist/schematics/application/files\""
   },
-  "schematics": "./schematics/collection.json",
-  "builders": "./builders/builders.json",
+  "schematics": "./dist/schematics/collection.json",
+  "builders": "./dist/builders/builders.json",
   "dependencies": {
-    "@angular-devkit/build-angular": "^0.800.0-rc.3",
-    "@angular-devkit/core": "^8.0.0-rc.3",
-    "@angular-devkit/schematics": "^8.0.0-rc.3",
-    "@angular/compiler": "^8.0.0-rc.3",
-    "@angular/compiler-cli": "^8.0.0-rc.3",
-    "@angular/core": "^8.0.0-rc.2",
-    "@schematics/angular": "^8.0.0-rc.3"
+    "@angular-devkit/build-angular": "^0.800.3",
+    "@angular-devkit/core": "^8.0.3",
+    "@angular-devkit/schematics": "^8.0.3",
+    "@angular/compiler": "^8.0.2",
+    "@angular/compiler-cli": "^8.0.2",
+    "@angular/core": "^8.0.2",
+    "@schematics/angular": "^8.0.3",
+    "webpack-merge": "^4.2.2"
   },
   "devDependencies": {
-    "@types/jasmine": "^3.0.0",
+    "@types/jasmine": "^3.3.13",
     "@types/node": "~11.9.0",
-    "@types/webpack": "^4.4.29",
-    "@types/webpack-dev-server": "^3.1.5",
+    "@types/webpack": "^4.4.33",
+    "@types/webpack-dev-server": "^3.1.6",
+    "cpx": "^1.5.0",
     "jasmine": "^3.0.0",
-    "quicktype": "^15.0.185",
-    "ts-loader": "^6.0.2",
+    "quicktype": "^15.0.194",
+    "ts-loader": "^6.0.4",
     "tsconfig-paths-webpack-plugin": "^3.2.0",
-    "typescript": "^3.4.5"
+    "typescript": "~3.4.3"
   }
 }
