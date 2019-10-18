@@ -1,7 +1,7 @@
 {
   "name": "@richapps/ngnode",
   "version": "0.0.6-beta.2",
-  "description": "devkit for building node apps with the angular cli",
+  "description": "Angular builder for building node applications",
   "author": {
     "name": "Benjamin Dobler",
     "email": "benz@richapps.de",
@@ -20,14 +20,15 @@
   "schematics": "./dist/schematics/collection.json",
   "builders": "./dist/builders/builders.json",
   "dependencies": {
-    "@angular-devkit/build-angular": "^0.800.3",
-    "@angular-devkit/core": "^8.0.3",
-    "@angular-devkit/schematics": "^8.0.3",
-    "@angular/compiler": "^8.0.2",
-    "@angular/compiler-cli": "^8.0.2",
-    "@angular/core": "^8.0.2",
-    "@schematics/angular": "^8.0.3",
-    "webpack-merge": "^4.2.2"
+    "@angular-devkit/core": ">=8.0.0",
+    "@angular-devkit/schematics": ">=8.0.0",
+    "@schematics/angular": ">=8.0.0",
+    "webpack-inject-plugin": "^1.5.3",
+    "webpack-merge": "^4.2.2",
+    "ws": "^7.1.2"
+  },
+  "peerDependencies": {
+    "@angular-devkit/build-angular": ">=8.0.0"
   },
   "devDependencies": {
     "@types/jasmine": "^3.3.13",

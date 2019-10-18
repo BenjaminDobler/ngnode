@@ -39,7 +39,7 @@ export default function (options: any): Rule {
 }
 
 function updateAngularConfig(options): Rule {
-  return async (tree: Tree, _context: SchematicContext) => {
+  return (tree: Tree, _context: SchematicContext) => {
     const workspace = getWorkspace2(tree);
     workspace.projects[options.name] = {
       projectType: ProjectType.Application,
