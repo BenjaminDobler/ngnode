@@ -1,6 +1,6 @@
 {
   "name": "@richapps/ngnode",
-  "version": "0.0.6-beta.2",
+  "version": "1.0.2-rc.2",
   "description": "Angular builder for building node applications",
   "author": {
     "name": "Benjamin Dobler",
