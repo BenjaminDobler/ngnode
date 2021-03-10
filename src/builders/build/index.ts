@@ -72,7 +72,7 @@ function buildConfig(options) {
     watch: true,
     output: {
       path: options.outputPath,
-      filename: 'main.js'
+      filename: '[name].js'
     },
     module: {
       rules: [
