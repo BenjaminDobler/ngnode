@@ -25,6 +25,7 @@
     "@angular-devkit/core": ">=8.0.0",
     "@angular-devkit/schematics": ">=8.0.0",
     "@schematics/angular": ">=8.0.0",
+    "ts-loader": "^6.0.4",
     "webpack-inject-plugin": "^1.5.3",
     "webpack-merge": "^4.2.2",
     "ws": "^7.1.2"
@@ -38,7 +39,6 @@
     "cpx": "^1.5.0",
     "jasmine": "^3.0.0",
     "quicktype": "^15.0.194",
-    "ts-loader": "^6.0.4",
     "tsconfig-paths-webpack-plugin": "^3.2.0",
     "typescript": "~3.4.3"
   }
