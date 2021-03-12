@@ -32,6 +32,11 @@
     },
     "tsConfig": {
       "type": "string"
+    },
+    "watch": {
+      "description": "Whether to run webpack in watch mode or not.",
+      "type": "boolean",
+      "default": false
     }
   },
   "required": ["main", "outputPath", "tsConfig"],
