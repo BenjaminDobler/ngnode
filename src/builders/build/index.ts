@@ -27,9 +27,7 @@ export const execute = (options: any, context: BuilderContext): Observable<Build
   return from(setup()).pipe(
     map(project => normalizeOptions(options, project, context)),
     map(options => buildConfig(options)),
-    switchMap(webpackConfig => runWebpack(webpackConfig, context)),
-    mapTo({ success: true }
-    )
+    switchMap(webpackConfig => runWebpack(webpackConfig, context))
   )
 }
 
@@ -69,7 +67,7 @@ function buildConfig(options) {
     entry,
     mode: 'production',
     target: 'node',
-    watch: true,
+    watch: options.watch,
     output: {
       path: options.outputPath,
       filename: '[name].js'
